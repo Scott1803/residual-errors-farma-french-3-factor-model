@@ -2,7 +2,7 @@ from calculate_residues import generate_residue_regression_input, run_regression
 from calculate_idiosyncratic_volatility import calculate_idiosyncratic_volatility_for_business
 from calculate_company_market_difference_factor import run_company_market_difference_regression
 from calculate_leverage_risk_connection import calculate_leverage_risk_association
-from write_result_table import write_result_table
+from write_result_table import write_result_table, generate_summary_table
 from run_linear_regression import run_linear_regression
 import time
 import numpy as np
@@ -129,6 +129,10 @@ def run_calculations():
                       lb, li, beta_lbf, beta_lif, 
                       lb_ts, li_ts, beta_lbf_ts, beta_lif_ts, 
                       'output/regression_results.tsv')
+    
+    # Generate summary table
+    generate_summary_table(all_results, beta_results, volatility_results, 
+                          'output/results-summarized.tsv')
     
     # Cache end timestamp and calculate duration
     end_time = time.time()

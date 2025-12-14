@@ -104,3 +104,44 @@ def write_result_table(regression_results, regression_input, volatility_results,
     print(f"Regression results written to: {output_location}")
     print(f"Total companies: {len(regression_results)}")
     print(f"Total rows: {len(rows)} ({len(regression_results)} companies × 22 days)")
+
+
+def generate_summary_table(regression_results, beta_results, volatility_results, output_location):
+    """
+    Generates a summary table with one row per company containing key metrics.
+    
+    Args:
+        regression_results (list): List of dictionaries from run_regression_for_company()
+        beta_results (list): List of beta (difference factor) values for each company
+        volatility_results (list): List of idiosyncratic volatility values for each company
+        output_location (str): Relative path and filename for the output file (from project root)
+    """
+    # Prepare summary data
+    summary_rows = []
+    
+    for company_idx, result in enumerate(regression_results):
+        isin = result['isin']
+        beta = beta_results[company_idx]
+        iv = volatility_results[company_idx]
+        
+        summary_row = {
+            'ISIN': isin,
+            'Beta': beta,
+            'Idiosyncratic Volatility': iv
+        }
+        
+        summary_rows.append(summary_row)
+    
+    # Create DataFrame
+    df_summary = pd.DataFrame(summary_rows)
+    
+    # Ensure output directory exists
+    output_dir = os.path.dirname(output_location)
+    if output_dir and not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    # Write to TSV file
+    df_summary.to_csv(output_location, sep='\t', index=False, float_format='%.6f')
+    
+    print(f"Summary table written to: {output_location}")
+    print(f"Total companies: {len(summary_rows)}")
