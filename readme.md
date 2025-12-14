@@ -1,25 +1,52 @@
-# Calculating Daily Residual Errors For Stock Evaluations Using The Fama-French 3 Factor Regression Model
+# Stock Risk Analysis Using Fama-French 3-Factor Model
 
-This code, specifically `calculate_residues.py`, uses the OLS regression model in the `statsmodels` library to
-calculate the above mentioned residual errors.
+**Authors:**
 
-## Calculating Daily Returns For Involved Companies
+- Mika Schwarz (Main Author)
+- Scott Clements (Secondary Author)
 
-Initially, only stock value data was available for the involved companies (as found in `company-share-prices.tsv`).
-From this data, by calculating ([share price t1] - [share price t0]) / [share price t1] for every cell, we use
-`calculate_returns.py` to calculate daily returns and write them to `company-daily-returns.tsv`.
+This project implements a comprehensive stock risk analysis pipeline using the Fama-French three-factor regression model with `statsmodels` OLS regression. It calculates residual errors, idiosyncratic volatility, beta factors, and analyzes leverage-risk and underpricing relationships for 109 companies over 22 post-IPO trading days.
+
+## Features
+
+### Core Calculations
+
+- **Fama-French 3-Factor Regression**: Calculates α, β₁ (market), β₂ (SMB), β₃ (HML), R², and daily residuals
+- **Idiosyncratic Volatility (IV)**: Risk measure from regression residuals
+- **Beta Factor**: Company-market difference factor from simple market regression
+- **Leverage-Risk Associations**:
+  - `lb`: Leverage ~ Beta coefficient with t-statistic
+  - `li`: Leverage ~ IV coefficient with t-statistic
+- **Underpricing Regressions**:
+  - `beta_lbf`: Underpricing ~ (Leverage × Beta) with t-statistic
+  - `beta_lif`: Underpricing ~ (Leverage × IV) with t-statistic
+
+## Workflow
+
+Execute `run_calculations.py` to run the complete analysis pipeline:
+
+1. Generate regression input data for all companies
+2. Run Fama-French regressions for each company
+3. Calculate idiosyncratic volatility from residuals
+4. Calculate beta factors from market regressions
+5. Compute leverage-risk associations (lb, li)
+6. Run underpricing regressions (beta_lbf, beta_lif)
+7. Write results to `output/regression_results.tsv` (2,398 rows × 24 columns)
 
 ## Input Data
 
-For the regression, three sets of input data are used
-
-- `company-daily-returns.tsv` Daily return values for all involved companies since their IPO
-- `eu-market-data.tsv` Daily returns / losses on EU market since early 2004
-- `smb-hml.tsv` Daily size and book to market factors calculated using Fama and French methodology (sources from [here](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html))
+- `company-daily-returns.tsv` - Daily returns for all companies (calculated from `company-share-prices.tsv` using `calculate_returns.py`)
+- `eu-market-data.tsv` - Daily EU market returns/losses since 2004
+- `smb-hml.tsv` - Size and book-to-market factors from [Ken French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html)
+- `leverage-and-underpricing.tsv` - Company leverage and underpricing metrics
 
 ## Output Data
 
-Running `calculate_residues.py` generates input datasets for the first working after of every involved companies IPO, then runs the regression over every input dataset. This results in the fixed parameters `α`, `β1`,`β2` and`β3`
-for each dataset, as well as daily residual error values `Resid[0-21]`.
+`regression_results.tsv` contains 24 columns per company-day:
 
-The results are written to `regression_results.tsv`
+- Company identifiers: ISIN, Day, Date
+- Input factors: Daily Return, EU Market Change, beta, SMB, HML
+- Regression results: α, β₁, β₂, β₃, R², Adj. R², Residual
+- Risk metrics: iv (idiosyncratic volatility)
+- Leverage associations: lb, lb_ts, li, li_ts (coefficients and t-statistics)
+- Underpricing factors: beta_lbf, beta_lbf_ts, beta_lif, beta_lif_ts (coefficients and t-statistics)
