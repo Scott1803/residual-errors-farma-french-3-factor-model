@@ -363,8 +363,8 @@ def display_regression_output(regression_results, count=None):
     
     # Print header
     print(f"\n{'='*170}")
-    print(f"Fama-French Three-Factor Regression Results Summary")
-    print(f"Model: R(i,d) = α + β₁·R(m,d) + β₂·SMB + β₃·HML + ε")
+    print("Fama-French Three-Factor Regression Results Summary")
+    print("Model: R(i,d) = α + β₁·R(m,d) + β₂·SMB + β₃·HML + ε")
     print(f"{'='*170}")
     print(f"{'ISIN':<30} {'α (Alpha)':>12} {'β₁ (Market)':>12} {'β₂ (SMB)':>12} {'β₃ (HML)':>12} {'R²':>10} {'Adj. R²':>10} {'Resid Mean':>12} {'Resid Std':>12} {'N':>5}")
     print(f"{'-'*170}")
@@ -401,31 +401,6 @@ def display_regression_output(regression_results, count=None):
     print(f"{'='*170}")
     print(f"Showing {len(results_to_display)} of {len(regression_results)} companies\n")
 
-
-def run_regressions_and_write_results():
-    """
-    Main workflow function that generates regression input, runs regressions for all companies,
-    displays results, and writes output to TSV file.
-    """
-    # Generate regression input
-    regression_input = generate_residue_regression_input()
-    
-    # Run regressions for all companies
-    all_results = []
-    for i in range(regression_input.shape[0]):
-        company_data = regression_input[i]
-        result = run_regression_for_company(company_data)
-        all_results.append(result)
-    
-    # Display results (first 10 companies)
-    display_regression_output(all_results, count=10)
-    
-    # Write results to TSV file
-    write_regression_results(all_results, regression_input)
-
-
-if __name__ == "__main__":
-    run_regressions_and_write_results()
 
 
 
