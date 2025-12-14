@@ -8,13 +8,13 @@ import pandas as pd
 from run_linear_regression import run_linear_regression
 
 
-def calculate_leverage_risk_association(explaining_risk_factor) -> float:
+def calculate_leverage_risk_association(explaining_risk_factor):
     """
     Calculates the association between leverage and risk factor using linear regression.
     
     :param explaining_risk_factor: Array of risk factor values (beta or idiosyncratic risk) for each company
-    :return: Regression coefficient showing the relationship between risk factor and leverage
-    :rtype: float
+    :return: Tuple of (regression coefficient, t-statistic)
+    :rtype: tuple(float, float)
     """
     # Parse the leverage data file
     df = pd.read_csv('input/leverage-and-underpricing.tsv', sep='\t')
@@ -32,6 +32,7 @@ def calculate_leverage_risk_association(explaining_risk_factor) -> float:
                 leverage_values.append(float(value))
     
     # Run linear regression: leverage (to explain) ~ risk factor (explaining)
+    # Returns tuple of (coefficient, t-statistic)
     result = run_linear_regression(explaining_risk_factor, leverage_values)
     
     return result

@@ -61,10 +61,10 @@ def run_calculations():
         beta_results.append(beta)
     
     # Calculate leverage-beta association (lb) - one value for all companies
-    lb = calculate_leverage_risk_association(beta_results)
+    lb, lb_ts = calculate_leverage_risk_association(beta_results)
     
     # Calculate leverage-idiosyncratic risk association (li) - one value for all companies
-    li = calculate_leverage_risk_association(volatility_results)
+    li, li_ts = calculate_leverage_risk_association(volatility_results)
     
     leverage_df = pd.read_csv('input/leverage-and-underpricing.tsv', sep='\t')
     
@@ -119,13 +119,16 @@ def run_calculations():
     leverage_iv_product = [l * iv for l, iv in zip(leverage_values, valid_iv)]
     
     # Run regressions: underpricing ~ leverage * risk_factor
-    beta_lbf = run_linear_regression(leverage_beta_product, underpricing_values)
-    beta_lif = run_linear_regression(leverage_iv_product, underpricing_values)
+    beta_lbf, beta_lbf_ts = run_linear_regression(leverage_beta_product, underpricing_values)
+    beta_lif, beta_lif_ts = run_linear_regression(leverage_iv_product, underpricing_values)
     
     print("writing results")
     
     # Write results to TSV file
-    write_result_table(all_results, regression_input, volatility_results, beta_results, lb, li, beta_lbf, beta_lif, 'output/regression_results.tsv')
+    write_result_table(all_results, regression_input, volatility_results, beta_results, 
+                      lb, li, beta_lbf, beta_lif, 
+                      lb_ts, li_ts, beta_lbf_ts, beta_lif_ts, 
+                      'output/regression_results.tsv')
     
     # Cache end timestamp and calculate duration
     end_time = time.time()

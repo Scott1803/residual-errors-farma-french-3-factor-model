@@ -2,7 +2,10 @@ import pandas as pd
 import os
 
 
-def write_result_table(regression_results, regression_input, volatility_results, beta_results, lb, li, beta_lbf, beta_lif, output_location):
+def write_result_table(regression_results, regression_input, volatility_results, beta_results, 
+                      lb, li, beta_lbf, beta_lif,
+                      lb_ts, li_ts, beta_lbf_ts, beta_lif_ts,
+                      output_location):
     """
     Writes regression results to a TSV file with one row per company per day (22 rows per company).
     Includes idiosyncratic volatility, beta, leverage associations, and underpricing factors for each company.
@@ -16,6 +19,10 @@ def write_result_table(regression_results, regression_input, volatility_results,
         li (float): Leverage-idiosyncratic risk association coefficient (same for all companies)
         beta_lbf (float): Underpricing ~ leverage*beta regression coefficient (same for all companies)
         beta_lif (float): Underpricing ~ leverage*idiosyncratic volatility regression coefficient (same for all companies)
+        lb_ts (float): t-statistic for lb
+        li_ts (float): t-statistic for li
+        beta_lbf_ts (float): t-statistic for beta_lbf
+        beta_lif_ts (float): t-statistic for beta_lif
         output_location (str): Relative path and filename for the output file (from project root)
     """
     # Prepare data for DataFrame
@@ -72,9 +79,13 @@ def write_result_table(regression_results, regression_input, volatility_results,
                 'Residual': residual,
                 'iv': iv,
                 'lb': lb,
+                'lb_ts': lb_ts,
                 'li': li,
+                'li_ts': li_ts,
                 'beta_lbf': beta_lbf,
-                'beta_lif': beta_lif
+                'beta_lbf_ts': beta_lbf_ts,
+                'beta_lif': beta_lif,
+                'beta_lif_ts': beta_lif_ts
             }
             
             rows.append(row_data)

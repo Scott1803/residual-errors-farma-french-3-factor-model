@@ -2,15 +2,15 @@ import numpy as np
 import statsmodels.api as sm
 
 
-def run_linear_regression(explaining_factor, to_explain_factor) -> float:
+def run_linear_regression(explaining_factor, to_explain_factor):
     """
-    Runs a simple linear regression to determine the coefficient (beta) from the formula:
+    Runs a simple linear regression to determine the coefficient (beta) and t-statistic from the formula:
     y = α + β * x + ε
     
     :param explaining_factor: Array of floats representing the independent variable (x)
     :param to_explain_factor: Array of floats representing the dependent variable (y)
-    :return: Beta coefficient (β) from the regression
-    :rtype: float
+    :return: Tuple of (beta coefficient, t-statistic)
+    :rtype: tuple(float, float)
     """
     # Convert to numpy arrays
     x = np.array(explaining_factor, dtype=float)
@@ -21,7 +21,7 @@ def run_linear_regression(explaining_factor, to_explain_factor) -> float:
     
     if np.sum(valid_indices) < 2:
         # Not enough valid data points for regression
-        return np.nan
+        return np.nan, np.nan
     
     # Filter to valid data points
     x_valid = x[valid_indices]
@@ -34,12 +34,15 @@ def run_linear_regression(explaining_factor, to_explain_factor) -> float:
     model = sm.OLS(y_valid, X)
     results = model.fit()
     
-    # Extract beta coefficient
+    # Extract beta coefficient and t-statistic
     # results.params[0] is alpha (intercept)
     # results.params[1] is beta (slope)
+    # results.tvalues[1] is t-statistic for beta
     if len(results.params) >= 2:
         beta = results.params[1]
+        t_stat = results.tvalues[1]
     else:
         beta = np.nan
+        t_stat = np.nan
     
-    return beta
+    return beta, t_stat
